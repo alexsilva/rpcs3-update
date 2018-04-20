@@ -2,7 +2,6 @@ import argparse
 import os
 import re
 import subprocess
-import argparse
 import sys
 import tempfile
 from urllib import urlretrieve
