@@ -2,6 +2,7 @@ import argparse
 import os
 import re
 import subprocess
+import argparse
 import sys
 import tempfile
 from urllib import urlretrieve
@@ -80,9 +81,12 @@ class Rpcs3(object):
 def main(*args):
     parser = argparse.ArgumentParser(description='Rpcs3 settings')
     parser.add_argument("--decompress-path", type=str, required=True)
-    args = parser.parse_args()
+    parser.add_argument("--decompress-tool", type=str, default='7z')
 
-    rpcs3 = Rpcs3(args.decompress_path)
+    args = parser.parse_args(args)
+
+    rpcs3 = Rpcs3(args.decompress_path,
+                  args.decompress_tool)
 
     rpcs3.download()
 
