@@ -39,7 +39,7 @@ class Rpcs3(object):
         print cmd_args
         print '=' * 5
 
-        subprocess.check_call(cmd_args)
+        subprocess.check_call(cmd_args, shell=False)
 
     def download(self):
         response = requests.get(self.site_url)
