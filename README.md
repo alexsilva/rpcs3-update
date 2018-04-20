@@ -9,6 +9,13 @@ Install:
 
 python -m pip install git+https://github.com/alexsilva/rpcs3-update.git@master
 
+Depends:
+
+requests
+
+7zip (command line)
+
+
 Usage:
 
-python -m rpcs3 --decompress-path="C:\\some\\path"
+python -m rpcs3 --decompress-path="C:\\some\\path"   Opt: --decompress-tool=7zip.exe
