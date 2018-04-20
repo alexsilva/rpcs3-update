@@ -1,6 +1,8 @@
+import argparse
 import os
 import re
 import subprocess
+import sys
 import tempfile
 from urllib import urlretrieve
 
@@ -75,7 +77,15 @@ class Rpcs3(object):
                     self.decompress(filepath)
 
 
-if __name__ == '__main__':
-    rpcs3 = Rpcs3(os.path.join(os.getcwd(), "rpcs3"))
+def main(*args):
+    parser = argparse.ArgumentParser(description='Rpcs3 settings')
+    parser.add_argument("--decompress-path", type=str, required=True)
+    args = parser.parse_args()
+
+    rpcs3 = Rpcs3(args.decompress_path)
 
     rpcs3.download()
+
+
+if __name__ == '__main__':
+    main(*sys.argv)
