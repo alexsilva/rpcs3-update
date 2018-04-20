@@ -75,9 +75,6 @@ class Rpcs3(object):
 
             # is new version (update)
             if last_version is None or version != last_version:
-                with open(self.download_version_path, "w") as fversion:
-                    fversion.write(version)
-
                 filepath = os.path.join(self.download_temp_path, filename)
 
                 # Download file
@@ -85,6 +82,10 @@ class Rpcs3(object):
                 urlretrieve(download_url, filepath)
 
                 self.decompress(filepath)
+
+                # history version
+                with open(self.download_version_path, "w") as fversion:
+                    fversion.write(version)
 
 
 def main(*args):
