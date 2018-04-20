@@ -5,7 +5,7 @@ import subprocess
 import sys
 import tempfile
 from urllib import urlretrieve
-
+import shlex
 import requests
 
 
@@ -29,14 +29,14 @@ class Rpcs3(object):
         safe_decomp_path = self.decompress_path.strip('"\'')
         safe_archive_path = archive_path.strip('"\'')
 
-        print safe_archive_path
-        print safe_decomp_path
+        cmd = '{0.decompress_tool} x "{1:s}" -o"{2:s}" -y'.format(self, safe_archive_path, safe_decomp_path)
+        cmd_args = shlex.split(cmd)
 
-        cmd = '{0.decompress_tool} e "{1:s}" -o"{2:s}" -y'.format(self, safe_archive_path, safe_decomp_path)
+        print '=' * 5
+        print cmd_args
+        print '=' * 5
 
-        print cmd
-
-        subprocess.check_call(cmd)
+        subprocess.check_call(cmd_args)
 
     def download(self):
         response = requests.get(self.artifacts_url)
