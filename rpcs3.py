@@ -10,8 +10,11 @@ import requests
 
 
 class Rpcs3(object):
-    # xml with list of files
-    artifacts_url = 'https://ci.appveyor.com/api/buildjobs/98bl186yleb2w65e/artifacts'
+    """Auto updater"""
+    site_url = 'https://rpcs3.net/download'
+
+    artifacts_pattern_url = re.compile('(?P<download>https://ci\.appveyor\.com/api/buildjobs/.*?rpcs3-v.*?win64\.7z)')
+
     pattern = re.compile("^rpcs3-v(?P<version>.*?)_win64\.7z$", re.I)
 
     def __init__(self, decompress_path, decompress_tool='7z'):
@@ -39,9 +42,15 @@ class Rpcs3(object):
         subprocess.check_call(cmd_args)
 
     def download(self):
-        response = requests.get(self.artifacts_url)
+        response = requests.get(self.site_url)
 
-        assert response.status_code == 200, 'invalid request!'
+        assert response.status_code == 200, 'response site invalid ({0.status_code})!'.format(response)
+
+        match = self.artifacts_pattern_url.search(response.text)
+
+        assert match is not None, 'download url no match!'
+
+        download_url = match.groupdict()['download']
 
         # Create directory if none exists
         if not os.path.isdir(self.decompress_path):
@@ -56,25 +65,26 @@ class Rpcs3(object):
             with open(self.download_version_path, 'r') as fversion:
                 last_version = fversion.read().strip('\n ')
 
-        for el in response.json():
-            filename = el['fileName']
-            match = self.pattern.match(filename)
-            if match:
-                version = match.groupdict()['version']
+        filename = os.path.basename(download_url)
 
-                # is new version (update)
-                if last_version is None or version != last_version:
-                    with open(self.download_version_path, "w") as fversion:
-                        fversion.write(version)
+        match = self.pattern.match(filename)
 
-                    filepath = os.path.join(self.download_temp_path, filename)
-                    file_url = self.artifacts_url + "/" + filename
+        assert match is not None, 'filename no match!'
+        if match:
+            version = match.groupdict()['version']
 
-                    # Download file
-                    print "Downloading {}...".format(file_url)
-                    urlretrieve(file_url, filepath)
+            # is new version (update)
+            if last_version is None or version != last_version:
+                with open(self.download_version_path, "w") as fversion:
+                    fversion.write(version)
 
-                    self.decompress(filepath)
+                filepath = os.path.join(self.download_temp_path, filename)
+
+                # Download file
+                print "Downloading {}...".format(download_url)
+                urlretrieve(download_url, filepath)
+
+                self.decompress(filepath)
 
 
 def main(*args):
