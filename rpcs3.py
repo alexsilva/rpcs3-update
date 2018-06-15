@@ -12,8 +12,7 @@ import requests
 class Rpcs3(object):
     """Auto updater"""
     site_url = 'https://rpcs3.net/download'
-
-    artifacts_pattern_url = re.compile('(?P<download>https://ci\.appveyor\.com/api/buildjobs/.*?rpcs3-v.*?win64\.7z)')
+    artifacts_pattern_url = re.compile('(?P<download>https://github.com/RPCS3/rpcs3-binaries-win/releases/download/.*?rpcs3-v.*?win64\.7z)', re.I)
 
     pattern = re.compile("^rpcs3-v(?P<version>.*?)_win64\.7z$", re.I)
 
